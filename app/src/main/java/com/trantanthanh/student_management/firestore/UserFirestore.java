@@ -1,12 +1,21 @@
 package com.trantanthanh.student_management.firestore;
 
+import android.net.Uri;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.trantanthanh.student_management.dto.LoginHistoryDTO;
 import com.trantanthanh.student_management.model.User;
 import com.trantanthanh.student_management.utils.PasswordHasher;
@@ -24,9 +33,12 @@ public class UserFirestore {
     private final FirebaseFirestore db;
     private final CollectionReference userCollection;
 
+    private final StorageReference storageReference;
+
     public UserFirestore() {
         db = FirebaseFirestore.getInstance();
         userCollection = db.collection("user");
+        storageReference = FirebaseStorage.getInstance().getReference().child("images");
     }
 
     public CompletableFuture<Boolean> createNewUser(User user) {
@@ -139,24 +151,42 @@ public class UserFirestore {
         return result;
     }
 
-    public CompletableFuture<Boolean> updateUser(User user) {
+    public CompletableFuture<Boolean> updateUser(User userUpdate) {
         CompletableFuture<Boolean> result = new CompletableFuture<>();
 
-        DocumentReference userRef = userCollection.document(user.getId());
+        DocumentReference userRef = userCollection.document(userUpdate.getId());
+        StorageReference imageRef = storageReference.child(String.valueOf(System.currentTimeMillis()));
 
-        Map<String, Object> userMap = new HashMap<>();
-
-        if (user.getName() != null) {
-            userMap.put("name", user.getName());
+        if (userUpdate.getImgUri() != null) {
+            // Check nếu avatar không null, thì upload ảnh lên storage
+            imageRef.putFile(userUpdate.getImgUri()).addOnCompleteListener(task -> {
+                if (task.isSuccessful() && task.isComplete()) {
+                    imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                        Map<String, Object> userMap = new HashMap<>();
+                        userMap.put("avatar", uri.toString());
+                        // Tiếp tục cập nhật dữ liệu người dùng với avatar
+                        updateUserInFirestore(userRef, userMap, result);
+                    });
+                } else {
+                    // Xử lý khi upload ảnh thất bại
+                    result.completeExceptionally(task.getException());
+                }
+            });
+        } else {
+            // Nếu avatar là null, chỉ cập nhật thông tin người dùng không bao gồm avatar
+            Map<String, Object> userMap = new HashMap<>();
+            userMap.put("name", userUpdate.getName());
+            userMap.put("phone", userUpdate.getPhone());
+            userMap.put("birthdate", userUpdate.getBirthdate());
+            updateUserInFirestore(userRef, userMap, result);
         }
-        if (user.getName() != null) {
-            userMap.put("name", user.getName());
-        }
-        // Thêm các trường dữ liệu khác tương tự vào userMap
 
+        return result;
+    }
+
+    private void updateUserInFirestore(DocumentReference userRef, Map<String, Object> userMap, CompletableFuture<Boolean> result) {
         if (!userMap.isEmpty()) {
-            userRef
-                    .update(userMap)
+            userRef.update(userMap)
                     .addOnSuccessListener(aVoid -> {
                         // Cập nhật thành công
                         result.complete(true);
@@ -169,7 +199,22 @@ public class UserFirestore {
             // Không có trường dữ liệu để cập nhật
             result.complete(true);
         }
+    }
 
+    public CompletableFuture<Boolean> updateStatus(String userId, String status) {
+        CompletableFuture<Boolean> result = new CompletableFuture<>();
+        DocumentReference userRef = userCollection.document(userId);
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("status", status);
+        userRef.update(updates)
+            .addOnSuccessListener(aVoid -> {
+                // Cập nhật thành công
+                result.complete(true);
+            })
+            .addOnFailureListener(e -> {
+                // Xử lý khi cập nhật thất bại
+                result.completeExceptionally(e);
+            });
         return result;
     }
 }

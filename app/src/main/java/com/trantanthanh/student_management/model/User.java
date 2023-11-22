@@ -1,5 +1,6 @@
 package com.trantanthanh.student_management.model;
 
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -19,6 +20,8 @@ public class User implements Parcelable {
 
     private String birthdate;
 
+    private Uri imgUri;
+
     public User() {
 
     }
@@ -27,6 +30,17 @@ public class User implements Parcelable {
         this.phone = phone;
     }
 
+    public User(User user) {
+        this.id = user.id;
+        this.avatar = user.avatar;
+        this.name = user.name;
+        this.password = user.password;
+        this.phone = user.phone;
+        this.role = user.role;
+        this.status = user.status;
+        this.birthdate = user.birthdate;
+        this.imgUri = user.imgUri;
+    }
 
     public User(String avatar, String name, String password,
                 String phone, String role, String status, String birthdate) {
@@ -124,6 +138,14 @@ public class User implements Parcelable {
 
     public void setBirthdate(String birthdate) {
         this.birthdate = birthdate;
+    }
+
+    public Uri getImgUri() {
+        return imgUri;
+    }
+
+    public void setImgUri(Uri imgUri) {
+        this.imgUri = imgUri;
     }
 
     @Override

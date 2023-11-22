@@ -1,6 +1,7 @@
 package com.trantanthanh.student_management.fragment;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -9,6 +10,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.squareup.picasso.Picasso;
 import com.trantanthanh.student_management.R;
 import com.trantanthanh.student_management.activity.LoginHistoryActivity;
 import com.trantanthanh.student_management.activity.UsersActivity;
@@ -75,6 +79,24 @@ public class HomeFragment extends Fragment {
             User user = args.getParcelable("user");
             binding.tvName.setText(user.getName());
             binding.tvRole.setText(user.getRole());
+            if(user.getAvatar() != null) {
+                Picasso.get().load(user.getAvatar()).into(binding.shapeableImageView);
+            }
+
+            DocumentReference userDoc = FirebaseFirestore.getInstance()
+                    .collection("user").document(user.getId());
+            userDoc.addSnapshotListener((querySnapshot, e) -> {
+                if (e != null) {
+                    // Xử lý lỗi khi lắng nghe
+                    return;
+                }
+                if (querySnapshot != null && querySnapshot.exists()) {
+                    User updatedUser = querySnapshot.toObject(User.class);
+                    binding.tvName.setText(updatedUser.getName());
+                    Picasso.get().load(updatedUser.getAvatar()).into(binding.shapeableImageView);
+
+                }
+            });
         }
         binding.cvUsers.setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), UsersActivity.class);

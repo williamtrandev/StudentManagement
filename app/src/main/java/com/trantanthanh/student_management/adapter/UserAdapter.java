@@ -16,6 +16,8 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.imageview.ShapeableImageView;
+import com.squareup.picasso.Picasso;
 import com.trantanthanh.student_management.activity.DetailUserActivity;
 import com.trantanthanh.student_management.databinding.UserItemBinding;
 import com.trantanthanh.student_management.model.User;
@@ -53,10 +55,11 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>{
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         User user = userList.get(position);
         if(user == null) return;
-//        holder.imgUser.setImageURI();
         holder.tvUser.setText(user.getName());
         String userRole = ChangeStringFormat.formatToVietnameseRole(user.getRole());
         holder.tvUserRole.setText(userRole);
+        Picasso.get().load(user.getAvatar()).into(holder.imgUser);
+
         holder.cardView.setOnClickListener(v -> {
             Intent intent = new Intent(holder.itemView.getContext(), DetailUserActivity.class);
             intent.putExtra("user", user);
@@ -73,7 +76,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>{
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView tvUser, tvUserRole;
-        public ImageView imgUser;
+        public ShapeableImageView imgUser;
         public CardView cardView;
         UserItemBinding userItemBinding;
         public ViewHolder(UserItemBinding userItemBinding) {
