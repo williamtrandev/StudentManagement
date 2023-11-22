@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="padding">20dp</dimen>
+    <dimen name="radius_card">12dp</dimen>
+    <dimen name="margin_icon">20dp</dimen>
+    <dimen name="boxshadow_card">4dp</dimen>
+    <dimen name="text_size_answer">20sp</dimen>
+    <dimen name="padding_text">12dp</dimen>
+    <dimen name="text_normal">16sp</dimen>
+</resources>
