@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
 import com.trantanthanh.student_management.R;
 import com.trantanthanh.student_management.activity.LoginHistoryActivity;
+import com.trantanthanh.student_management.activity.StudentActivity;
 import com.trantanthanh.student_management.activity.UsersActivity;
 import com.trantanthanh.student_management.databinding.FragmentHomeBinding;
 import com.trantanthanh.student_management.model.User;
@@ -79,7 +81,7 @@ public class HomeFragment extends Fragment {
             User user = args.getParcelable("user");
             binding.tvName.setText(user.getName());
             binding.tvRole.setText(user.getRole());
-            if(user.getAvatar() != null) {
+            if(user.getAvatar() != null && !user.getAvatar().isEmpty()) {
                 Picasso.get().load(user.getAvatar()).into(binding.shapeableImageView);
             }
 
@@ -94,7 +96,7 @@ public class HomeFragment extends Fragment {
                     User updatedUser = querySnapshot.toObject(User.class);
                     binding.tvName.setText(updatedUser.getName());
                     Picasso.get().load(updatedUser.getAvatar()).into(binding.shapeableImageView);
-
+                    binding.tvRole.setText(updatedUser.getRole());
                 }
             });
         }
@@ -109,7 +111,8 @@ public class HomeFragment extends Fragment {
         });
 
         binding.cvStudent.setOnClickListener(v -> {
-
+            Intent intent = new Intent(getContext(), StudentActivity.class);
+            startActivity(intent);
         });
 
         binding.cvAdd.setOnClickListener(v -> {

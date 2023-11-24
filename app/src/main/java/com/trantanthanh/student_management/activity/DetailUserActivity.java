@@ -53,6 +53,9 @@ public class DetailUserActivity extends AppCompatActivity {
         binding.edtBirthdate.setText(user.getBirthdate());
         binding.edtPhone.setText(user.getPhone());
         binding.edtStatus.setText(user.getStatus());
+        if(user.getAvatar() != null && user.getAvatar() != "") {
+            Picasso.get().load(user.getAvatar()).into(binding.avatarUser);
+        }
         String btnBlockUnBlock = user.getStatus().equalsIgnoreCase("Normal")
                                     ? "Khóa" : "Mở khóa";
         binding.btnBlock.setText(btnBlockUnBlock);
@@ -91,8 +94,16 @@ public class DetailUserActivity extends AppCompatActivity {
                 }
             });
         });
-        Picasso.get().load(user.getAvatar()).into(binding.avatarUser);
 
+        ActivityResultLauncher<String> pickImagesFromGallery = registerForActivityResult(new ActivityResultContracts.GetContent()
+                , result -> {
+                    if (result != null){
+                        imgURI = result;
+                        binding.avatarUser.setImageURI(result);
+                        userUpdate.setImgUri(result);
+                    }
+
+                });
         binding.avatarUser.setOnClickListener(v -> {
             pickImagesFromGallery.launch("image/*");
         });
@@ -178,13 +189,5 @@ public class DetailUserActivity extends AppCompatActivity {
         });
     }
 
-    ActivityResultLauncher<String> pickImagesFromGallery = registerForActivityResult(new ActivityResultContracts.GetContent()
-            , result -> {
-                if (result != null){
-                    imgURI = result;
-                    binding.avatarUser.setImageURI(result);
-                    userUpdate.setImgUri(result);
-                }
 
-            });
 }

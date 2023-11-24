@@ -56,10 +56,10 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>{
         User user = userList.get(position);
         if(user == null) return;
         holder.tvUser.setText(user.getName());
-        String userRole = ChangeStringFormat.formatToVietnameseRole(user.getRole());
-        holder.tvUserRole.setText(userRole);
-        Picasso.get().load(user.getAvatar()).into(holder.imgUser);
-
+        holder.tvUserRole.setText(user.getRole());
+        if(user.getAvatar() != null && !user.getAvatar().isEmpty()) {
+            Picasso.get().load(user.getAvatar()).into(holder.imgUser);
+        }
         holder.cardView.setOnClickListener(v -> {
             Intent intent = new Intent(holder.itemView.getContext(), DetailUserActivity.class);
             intent.putExtra("user", user);

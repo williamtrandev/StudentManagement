@@ -1,6 +1,5 @@
 package com.trantanthanh.student_management.activity;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -8,18 +7,9 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Toast;
 
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.trantanthanh.student_management.R;
 import com.trantanthanh.student_management.databinding.ActivityMainBinding;
-import com.trantanthanh.student_management.fragment.AddFragment;
 import com.trantanthanh.student_management.fragment.HomeFragment;
 import com.trantanthanh.student_management.fragment.ProfileFragment;
 import com.trantanthanh.student_management.model.User;
@@ -42,6 +32,13 @@ public class MainActivity extends AppCompatActivity {
         HomeFragment homeFragment = new HomeFragment();
         homeFragment.setArguments(homeBundle);
 
+        // Profile Fragment
+        Bundle profileBundle = new Bundle();
+        profileBundle.putParcelable("user", user);
+        ProfileFragment profileFragment = new ProfileFragment();
+        profileFragment.setArguments(profileBundle);
+
+
         // Hiển thị home đầu tiên
         replaceFragment(homeFragment);
 
@@ -50,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
             if (id == R.id.home) {
                 replaceFragment(homeFragment);
             } else {
-                replaceFragment(new ProfileFragment());
+                replaceFragment(profileFragment);
             }
             return true;
         });

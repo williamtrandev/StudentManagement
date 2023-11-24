@@ -120,7 +120,7 @@
     </androidx.cardview.widget.CardView>
 
     <Button
-        android:id="@+id/btnUpdatePrrofile"
+        android:id="@+id/btnUpdateInfo"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="40dp"
@@ -143,12 +143,12 @@
         android:textColor="#F6F7FB"
         android:textSize="18sp"
         app:backgroundTint="@null"
-        app:layout_constraintBottom_toTopOf="@+id/btnLogout"
+        app:layout_constraintBottom_toTopOf="@+id/btnDelete"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/btnLogout"
+        android:id="@+id/btnDelete"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="40dp"
