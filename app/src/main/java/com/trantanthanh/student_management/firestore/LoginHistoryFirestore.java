@@ -38,12 +38,10 @@ public class LoginHistoryFirestore {
                     List<LoginHistoryDTO> loginHistories = new ArrayList<>();
                     // Dùng để tránh trường hợp chưa lấy dữ liệu hết đã trả về kết quả
                     AtomicInteger tasksCount = new AtomicInteger(queryDocumentSnapshots.size());
-
                     for (DocumentSnapshot doc : queryDocumentSnapshots) {
                         Date loginTime = doc.getDate("loginTime");
                         String userId = doc.getString("userId");
                         DocumentReference userRef = db.collection("user").document(userId);
-
                         userRef.get()
                                 .addOnSuccessListener(userDocumentSnapshot  -> {
                                     User user = userDocumentSnapshot.toObject(User.class);

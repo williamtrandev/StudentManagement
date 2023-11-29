@@ -76,6 +76,16 @@
                 app:layout_constraintTop_toBottomOf="@+id/tvStudent"
                 app:layout_constraintBottom_toTopOf="@+id/tvUserRole"/>
 
+            <ImageView
+                android:id="@+id/imgDeleteStudent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                app:layout_constraintBottom_toTopOf="@+id/imgGender"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_baseline_backspace_24" />
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

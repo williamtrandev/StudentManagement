@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
@@ -28,6 +29,7 @@ import com.trantanthanh.student_management.model.User;
  */
 public class HomeFragment extends Fragment {
     FragmentHomeBinding binding;
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -75,39 +77,58 @@ public class HomeFragment extends Fragment {
         View view = binding.getRoot();
 //        // Inflate the layout for this fragment
 //        View view = inflater.inflate(R.layout.fragment_home, container, false);
-
         Bundle args = getArguments();
-        if(args != null) {
-            User user = args.getParcelable("user");
-            binding.tvName.setText(user.getName());
-            binding.tvRole.setText(user.getRole());
-            if(user.getAvatar() != null && !user.getAvatar().isEmpty()) {
-                Picasso.get().load(user.getAvatar()).into(binding.shapeableImageView);
-            }
-
-            DocumentReference userDoc = FirebaseFirestore.getInstance()
-                    .collection("user").document(user.getId());
-            userDoc.addSnapshotListener((querySnapshot, e) -> {
-                if (e != null) {
-                    // Xử lý lỗi khi lắng nghe
-                    return;
-                }
-                if (querySnapshot != null && querySnapshot.exists()) {
-                    User updatedUser = querySnapshot.toObject(User.class);
-                    binding.tvName.setText(updatedUser.getName());
-                    Picasso.get().load(updatedUser.getAvatar()).into(binding.shapeableImageView);
-                    binding.tvRole.setText(updatedUser.getRole());
-                }
-            });
+        User user = args.getParcelable("user");
+        binding.tvName.setText(user.getName());
+        binding.tvRole.setText(user.getRole());
+        if(user.getAvatar() != null && !user.getAvatar().isEmpty()) {
+            Picasso.get().load(user.getAvatar()).into(binding.shapeableImageView);
         }
+
+        DocumentReference userDoc = FirebaseFirestore.getInstance()
+                .collection("user").document(user.getId());
+        userDoc.addSnapshotListener((querySnapshot, e) -> {
+            if (e != null) {
+                // Xử lý lỗi khi lắng nghe
+                return;
+            }
+            if (querySnapshot != null && querySnapshot.exists()) {
+                User updatedUser = querySnapshot.toObject(User.class);
+                binding.tvName.setText(updatedUser.getName());
+                Picasso.get().load(updatedUser.getAvatar()).into(binding.shapeableImageView);
+                binding.tvRole.setText(updatedUser.getRole());
+            }
+        });
+
         binding.cvUsers.setOnClickListener(v -> {
-            Intent intent = new Intent(getContext(), UsersActivity.class);
-            startActivity(intent);
+            if(user.getRole().equalsIgnoreCase("Admin")) {
+                Intent intent = new Intent(getContext(), UsersActivity.class);
+                startActivity(intent);
+            } else {
+                new MaterialAlertDialogBuilder(getContext())
+                        .setTitle("Bạn không có quyền truy cập chức năng này")
+                        .setMessage("Chỉ có Admin mới có quyền!")
+                        .setNeutralButton("Xác nhận", (dialog, which) -> {
+                            dialog.dismiss();
+                        })
+                        .show();
+            }
         });
 
         binding.cvHistory.setOnClickListener(v -> {
-            Intent intent = new Intent(getContext(), LoginHistoryActivity.class);
-            startActivity(intent);
+            if(user.getRole().equalsIgnoreCase("Admin")) {
+                Intent intent = new Intent(getContext(), LoginHistoryActivity.class);
+                startActivity(intent);
+            } else {
+                new MaterialAlertDialogBuilder(getContext())
+                        .setTitle("Bạn không có quyền truy cập chức năng này")
+                        .setMessage("Chỉ có Admin mới có quyền!")
+                        .setNeutralButton("Xác nhận", (dialog, which) -> {
+                            dialog.dismiss();
+                        })
+                        .show();
+            }
+
         });
 
         binding.cvStudent.setOnClickListener(v -> {
@@ -115,9 +136,6 @@ public class HomeFragment extends Fragment {
             startActivity(intent);
         });
 
-        binding.cvAdd.setOnClickListener(v -> {
-
-        });
 
         return view;
     }

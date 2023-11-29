@@ -16,10 +16,13 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.squareup.picasso.Picasso;
 import com.trantanthanh.student_management.activity.DetailUserActivity;
 import com.trantanthanh.student_management.databinding.UserItemBinding;
+import com.trantanthanh.student_management.firestore.StudentFirestore;
+import com.trantanthanh.student_management.firestore.UserFirestore;
 import com.trantanthanh.student_management.model.User;
 import com.trantanthanh.student_management.utils.ChangeStringFormat;
 
@@ -29,6 +32,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>{
 
     private List<User> userList;
     private Context context;
+
+    private UserFirestore userFirestore;
 
     public UserAdapter(List<User> userList) {
         this.userList = userList;
@@ -40,6 +45,10 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>{
 
     public void setContext(Context context) {
         this.context = context;
+    }
+
+    public void setUserFirestore(UserFirestore userFirestore) {
+        this.userFirestore = userFirestore;
     }
 
     @NonNull
@@ -60,11 +69,24 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>{
         if(user.getAvatar() != null && !user.getAvatar().isEmpty()) {
             Picasso.get().load(user.getAvatar()).into(holder.imgUser);
         }
+        holder.imgDeleteUser.setOnClickListener(v -> {
+            new MaterialAlertDialogBuilder(holder.itemView.getContext())
+                    .setTitle("Xác nhận xoá User này không")
+                    .setMessage("Xóa sẽ không thể hoàn tác")
+                    .setNeutralButton("Xác nhận", (dialog, which) -> {
+                        userFirestore.deleteUser(user.getId());
+                    })
+                    .setNegativeButton("Hủy", (dialog, which) -> {
+                        dialog.dismiss();
+                    })
+                    .show();
+        });
         holder.cardView.setOnClickListener(v -> {
             Intent intent = new Intent(holder.itemView.getContext(), DetailUserActivity.class);
             intent.putExtra("user", user);
             holder.itemView.getContext().startActivity(intent);
         });
+
 
     }
 
@@ -78,6 +100,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>{
         public TextView tvUser, tvUserRole;
         public ShapeableImageView imgUser;
         public CardView cardView;
+        public ImageView imgDeleteUser;
         UserItemBinding userItemBinding;
         public ViewHolder(UserItemBinding userItemBinding) {
             super(userItemBinding.getRoot());
@@ -86,6 +109,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>{
             tvUserRole = userItemBinding.tvUserRole;
             imgUser = userItemBinding.imgUser;
             cardView = userItemBinding.cardView;
+            imgDeleteUser = userItemBinding.imgDeleteUser;
         }
 
     }

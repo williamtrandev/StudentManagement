@@ -10,9 +10,12 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.imageview.ShapeableImageView;
+import com.trantanthanh.student_management.activity.LoginActivity;
 import com.trantanthanh.student_management.databinding.CertificateItemBinding;
 import com.trantanthanh.student_management.databinding.StudentItemBinding;
+import com.trantanthanh.student_management.firestore.StudentFirestore;
 import com.trantanthanh.student_management.model.Certificate;
 
 import java.util.List;
@@ -23,12 +26,24 @@ public class CertificateAdapter extends RecyclerView.Adapter<CertificateAdapter.
 
     private Context context;
 
+    private StudentFirestore studentFirestore;
+
+    private String studentId;
+
     public CertificateAdapter(List<Certificate> certificateList) {
         this.certificateList = certificateList;
     }
 
     public void setContext(Context context) {
         this.context = context;
+    }
+
+    public void setStudentFirestore(StudentFirestore studentFirestore) {
+        this.studentFirestore = studentFirestore;
+    }
+
+    public void setStudentId(String studentId) {
+        this.studentId = studentId;
     }
 
     @NonNull
@@ -48,6 +63,18 @@ public class CertificateAdapter extends RecyclerView.Adapter<CertificateAdapter.
         holder.tvIssueDate.setText("Ngày cấp: " + certificate.getIssueDate());
         holder.tvExpiryDate.setText("Ngày hết hạn: " + certificate.getExpiryDate());
         holder.tvIssueBy.setText("Đơn vị cấp: " + certificate.getIssuedBy());
+        holder.imgDelete.setOnClickListener(v -> {
+            new MaterialAlertDialogBuilder(holder.itemView.getContext())
+                    .setTitle("Xác nhận xóa chứng chỉ")
+                    .setMessage("Xóa chứng chỉ này sẽ không thể hoàn tác")
+                    .setNeutralButton("Xác nhận", (dialog, which) -> {
+                        studentFirestore.deleteCertificate(certificate.getId(), studentId);
+                    })
+                    .setNegativeButton("Hủy", (dialog, which) -> {
+                        dialog.dismiss();
+                    })
+                    .show();
+        });
     }
 
     @Override
@@ -60,8 +87,13 @@ public class CertificateAdapter extends RecyclerView.Adapter<CertificateAdapter.
         this.certificateList = certificateList;
     }
 
+    public List<Certificate> getCertificateList() {
+        return this.certificateList;
+    }
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView tvNameCert, tvIssueDate, tvExpiryDate, tvIssueBy;
+        public ImageView imgDelete;
         CertificateItemBinding certificateItemBinding;
         public ViewHolder(CertificateItemBinding certificateItemBinding) {
             super(certificateItemBinding.getRoot());
@@ -70,6 +102,7 @@ public class CertificateAdapter extends RecyclerView.Adapter<CertificateAdapter.
             tvIssueDate = certificateItemBinding.tvIssueDate;
             tvExpiryDate = certificateItemBinding.tvExpiryDate;
             tvIssueBy = certificateItemBinding.tvIssueBy;
+            imgDelete = certificateItemBinding.imgDelete;
         }
 
     }

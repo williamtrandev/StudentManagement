@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/add_student"
+        android:title="Thêm học sinh" />
+    <item
+        android:id="@+id/add_student_by_file"
+        android:title="Thêm từ File Excel" />
+    <item
+        android:id="@+id/export_student"
+        android:title="Xuất danh sách ra File Excel" />
+    <item
+        android:id="@+id/sort_student"
+        android:title="Sắp xếp danh sách học sinh" />
+    <item
+        android:id="@+id/search_student"
+        android:title="Tìm kiếm học sinh" />
+</menu>

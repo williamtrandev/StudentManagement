@@ -67,6 +67,7 @@ public class UsersActivity extends AppCompatActivity {
 
         userAdapter = new UserAdapter(null);
         userAdapter.setContext(this);
+        userAdapter.setUserFirestore(userFirestore);
         binding.rcvUsers.setAdapter(userAdapter);
         binding.rcvUsers.setLayoutManager(new LinearLayoutManager(this));
         UserFirestore userFirestore = new UserFirestore();

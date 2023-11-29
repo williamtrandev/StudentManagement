@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/add_certificate"
+        android:title="Thêm chứng chỉ" />
+    <item
+        android:id="@+id/add_certificate_by_file"
+        android:title="Thêm từ File Excel" />
+    <item
+        android:id="@+id/export_certificate"
+        android:title="Xuất ra File Excel" />
+</menu>

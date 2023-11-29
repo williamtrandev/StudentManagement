@@ -153,10 +153,8 @@ public class UserFirestore {
 
     public CompletableFuture<Boolean> updateUser(User userUpdate) {
         CompletableFuture<Boolean> result = new CompletableFuture<>();
-
         DocumentReference userRef = userCollection.document(userUpdate.getId());
         StorageReference imageRef = storageReference.child(String.valueOf(System.currentTimeMillis()));
-
         if (userUpdate.getImgUri() != null) {
             // Check nếu avatar không null, thì upload ảnh lên storage
             imageRef.putFile(userUpdate.getImgUri()).addOnCompleteListener(task -> {
@@ -180,11 +178,11 @@ public class UserFirestore {
             userMap.put("birthdate", userUpdate.getBirthdate());
             updateUserInFirestore(userRef, userMap, result);
         }
-
         return result;
     }
 
-    private void updateUserInFirestore(DocumentReference userRef, Map<String, Object> userMap, CompletableFuture<Boolean> result) {
+    private void updateUserInFirestore(DocumentReference userRef, Map<String, Object> userMap,
+                                       CompletableFuture<Boolean> result) {
         if (!userMap.isEmpty()) {
             userRef.update(userMap)
                     .addOnSuccessListener(aVoid -> {
@@ -214,6 +212,18 @@ public class UserFirestore {
             .addOnFailureListener(e -> {
                 // Xử lý khi cập nhật thất bại
                 result.completeExceptionally(e);
+            });
+        return result;
+    }
+
+    public CompletableFuture<Boolean> deleteUser(String userId) {
+        CompletableFuture<Boolean> result = new CompletableFuture<>();
+        userCollection.document(userId).delete()
+            .addOnSuccessListener(aVoid -> {
+                result.complete(true);
+            })
+            .addOnFailureListener(e -> {
+                result.complete(false);
             });
         return result;
     }
